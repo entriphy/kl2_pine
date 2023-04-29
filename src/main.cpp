@@ -27,6 +27,7 @@ void draw() {
     uint irqc = memory.Read<uint>(KlonoaMemory::IRQC_ADDRESS);
     uint vision = memory.Read<uint>(KlonoaMemory::GAMEGBL_VISION); // GameGbl.vision
     uint vtWaveAddr = memory.Read<uint>(KlonoaMemory::VT_WAVE_ADDRESS);
+    uint camNorAddr = memory.Read<uint>(KlonoaMemory::CAMNOR_ADDRESS);
     uint camFixAddr = memory.Read<uint>(KlonoaMemory::CAMFIX_ADDRESS);
 
     uint pKlonoa = memory.Read<uint>(KlonoaMemory::GAMEGBL_KLONOA_ADDRESS); // GameGbl.klonoa
@@ -90,8 +91,10 @@ void draw() {
         if (ImGui::TreeNode("ObjWorkBuff")) {
             for (int i = 0; i < 128; i++) {
                 uint objworkAddress = KlonoaMemory::OBJWORK_BUFF_ADDRESS + i * sizeof(OBJWORK);
-                std::string name = "ObjWorkBuff[" + std::to_string(i) + "]";
-                if (memory.Read<uint>(objworkAddress + offsetof(OBJWORK, stat0)) != 0 && ImGui::TreeNode(name.c_str())) {
+                s16 stat0 = memory.Read<s16>(objworkAddress + offsetof(OBJWORK, stat0));
+                s16 stat1 = memory.Read<s16>(objworkAddress + offsetof(OBJWORK, stat1));
+                std::string name = "ObjWorkBuff[" + std::to_string(i) + "] " + stat0s[stat0] + ": " + getStat1(stat0, stat1);
+                if (stat0 != 0 && ImGui::TreeNode(name.c_str())) {
                     OBJWORK* objwork = memory.ReadObj<OBJWORK>(objworkAddress);
                     objwork->drawObj(&memory);
                     ImGui::TreePop();
@@ -113,8 +116,22 @@ void draw() {
             }
         }
 
+        if (KlonoaMemory::IsValidPointer(camNorAddr) && ImGui::TreeNode("Normal Cameras")) {
+            int i = 0;
+            while ((memory.Read<int>(camNorAddr + i * sizeof(nkCamNOR) + offsetof(nkCamNOR, flg)) & 128) == 0) {
+                std::string name = "camNor[" + std::to_string(i) + "]";
+                if (ImGui::TreeNode(name.c_str())) {
+                    nkCamNOR* cam = memory.ReadObj<nkCamNOR>(camNorAddr + i * sizeof(nkCamNOR));
+                    cam->draw(&memory);
+                    ImGui::TreePop();
+                }
+                i++;
+            }
+            ImGui::TreePop();
+        }
+
         if (KlonoaMemory::IsValidPointer(camFixAddr) && ImGui::TreeNode("Fixed Cameras")) {
-            uint count = 3;
+            uint count = 9;
             for (int i = 0; i < count; i++) {
                 std::string name = "camFix[" + std::to_string(i) + "]";
                 if (ImGui::TreeNode(name.c_str())) {

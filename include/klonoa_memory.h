@@ -14,6 +14,7 @@ public:
     static const uint VT_WAVE_ADDRESS = 0x003FB940;
     static const uint HRBGBIN_ADDRESS = 0x00332A90;
     static const uint HRI_ANM_ADDRESS = 0x003FA718;
+    static const uint CAMNOR_ADDRESS = 0x003FC458;
     static const uint CAMFIX_ADDRESS = 0x003FC45C;
     static const uint VICON_ADDRESS = 0x00518C10;
     static const uint RPCARG_ADDRESS = 0x0040efa0;

@@ -51,12 +51,9 @@ Window::Window() {
 void Window::loop() {
     while (!glfwWindowShouldClose(window)) {
         glfwPollEvents();
-
-        glClearColor(0, 0, 0, 0);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        
         int app_width, app_height;
         glfwGetFramebufferSize(window, &app_width, &app_height);
-        glViewport(0, 0, app_width, app_height);
 
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplGlfw_NewFrame();

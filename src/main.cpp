@@ -31,6 +31,7 @@ void draw() {
     uint camFixAddr = memory.Read<uint>(KlonoaMemory::CAMFIX_ADDRESS);
 
     uint pKlonoa = memory.Read<uint>(KlonoaMemory::GAMEGBL_KLONOA_ADDRESS); // GameGbl.klonoa
+    uint hfmircnt = memory.Read<uint>(KlonoaMemory::HFMIRCNT_ADDRESS);
     
     ImGui::Begin("Window", nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize);
     {
@@ -182,6 +183,18 @@ void draw() {
             }
             ImGui::TreePop();
         }
+
+        if (hfmircnt > 0 && ImGui::TreeNode("hfmirbuf")) {
+            HFMIR* hfmirbuf = (HFMIR*)memory.Read(KlonoaMemory::HFMIRBUF_ADDRESS, sizeof(HFMIR) * hfmircnt);
+            for (int i = 0; i < hfmircnt; i++) {
+                std::string name = "hfmirbuf[" + std::to_string(i) + "]";
+                if (ImGui::TreeNode(name.c_str())) {
+                    hfmirbuf[i].draw(&memory);
+                    ImGui::TreePop();
+                }
+            }
+            ImGui::TreePop();
+        } 
 
         // gp_value: 0x3FE070
     }

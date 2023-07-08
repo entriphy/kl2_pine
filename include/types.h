@@ -27,6 +27,19 @@ typedef volatile s64 vs64;
 
 typedef float f32;
 
+typedef union { // 0x10
+    // u128 u_u128;
+    u64  u_u64[2];
+    s64  u_s64[2];
+    u32  u_u32[4];
+    s32  u_s32[4];
+    u16  u_u16[8];
+    s16  u_s16[8];
+    u8   u_u8[16];
+    s8   u_s8[16];
+    f32  u_f32[4];
+} qword_uni __attribute__((aligned(16)));
+
 typedef struct FVECTOR {
 	float x;
 	float y;
@@ -673,6 +686,7 @@ typedef struct _OBJWORK {
             ImGui::TreePop();
         }
 
+        ImGui::Text("work_addr: %08x", work.ptr);
         if (ImGui::TreeNode("work")) {
             if (ImGui::TreeNode("HERO_WORK")) {
                 DrawHeroWork(mem, work.Get<HERO_WORK>(mem));
@@ -804,38 +818,56 @@ typedef struct {
 } PINDEX;
 
 // Size: 0x160
-typedef struct {
-    PGSREG regs[0x10];
-    ulong tex0;
-    PS2Pointer<PSPARTS> subparts;
-    PS2Pointer<u8> sfx_file;
-    PS2Pointer<PVERTEX> vertices;
-    PS2Pointer<PVERTEX> normals;
-    s32 field_0x118;
-    s32 field_0x11C;
-    s32 field_0x120;
-    s32 field_0x124;
-    PS2Pointer<PUV> uvs;
-    PS2Pointer<PINDEX> indices;
-    s32 field_0x130;
-    s32 field_0x134;
-    s32 field_0x138;
-    s32 field_0x13C;
-    u16 enable;
-    u16 subpart_count;
-    u16 vertex_count;
-    u16 normal_count;
-    u16 uv_count;
-    u16 tripstrip_count;
-    u16 field_0x14C;
-    u16 field_0x14E;
-    s16 packet_index;
-    s16 field_0x152;
-    s16 field_0x154;
-    s16 field_0x156;
-    s32 field_0x158;
-    s32 field_0x15C;
+typedef struct { // 0x160
+    /* 0x000 */ qword_uni GsEnv[16];
+    /* 0x100 */ u64 gs_tex0;
+    /* 0x108 */ PS2Pointer<s32> jblock_adrs;
+    /* 0x10c */ PS2Pointer<s32> sfx_adrs;
+    /* 0x110 */ PS2Pointer<s32> vert_adrs;
+    /* 0x114 */ PS2Pointer<s32> norm_adrs;
+    /* 0x118 */ PS2Pointer<s32> vert_adrs_mime0;
+    /* 0x11c */ PS2Pointer<s32> norm_adrs_mime0;
+    /* 0x120 */ PS2Pointer<s32> vert_adrs_mime1;
+    /* 0x124 */ PS2Pointer<s32> norm_adrs_mime1;
+    /* 0x128 */ PS2Pointer<s32> uv_adrs;
+    /* 0x12c */ PS2Pointer<s32> prim_adrs;
+    /* 0x130 */ PS2Pointer<s32> vert_wt_adrs;
+    /* 0x134 */ PS2Pointer<s32> norm_wt_adrs;
+    /* 0x138 */ f32 MimeWeight;
+    /* 0x13c */ PS2Pointer<u32> GmsAdr;
+    /* 0x140 */ u16 type;
+    /* 0x142 */ u16 jblock_num;
+    /* 0x144 */ u16 vert_num;
+    /* 0x146 */ u16 norm_num;
+    /* 0x148 */ u16 uv_num;
+    /* 0x14a */ u16 prim_num;
+    /* 0x14c */ u16 prim_blk;
+    /* 0x14e */ u16 coord_id;
+    /* 0x150 */ s16 GsEnvInd;
+    /* 0x152 */ s16 SpecType;
+    /* 0x154 */ s16 OutLine;
+
+    void draw(KlonoaMemory* mem) {
+        ImGui::Text("gs_tex0: %016lx", gs_tex0);
+        ImGui::Text("jblock_adrs: %x", jblock_adrs.ptr);
+        ImGui::Text("sfx_adrs: %x", sfx_adrs.ptr);
+        ImGui::Text("vert_adrs: %x", vert_adrs.ptr);
+        ImGui::Text("norm_adrs: %x", norm_adrs.ptr);
+        ImGui::Text("type: %d", type);
+        ImGui::Text("vert_num: %d", vert_num);
+    }
 } PPARTS;
+
+typedef struct { // 0x8
+    /* 0x0 */ u32 partsmax;
+    /* 0x4 */ u8 *status;
+} kitOutlineObjEnv;
+
+typedef struct { // 0x90
+    /* 0x00 */ s8 name[16];
+    /* 0x10 */ s8 outline[64];
+    /* 0x50 */ s8 spectype[64];
+} SFXENV;
 
 // Size: 0xA0
 typedef struct PSFXOBJ {
@@ -844,13 +876,13 @@ typedef struct PSFXOBJ {
     PS2Pointer<FMATRIX> pLightColor; // 0x14
     PS2Pointer<FMATRIX> pNormalLight; // 0x18
     s32 PartsNum; // 0x1C
-    PS2Pointer<u8> GmsNum; // 0x20
-    u32 field_0x24;
-    u32 field_0x28;
-    PS2Pointer<u8> pSfx; // 0x2C
-    PS2Pointer<u8> pAct; // 0x30
-    f32 upad2;
-    u16 something;
+    PS2Pointer<u8> GmsAdrs; // 0x20
+    PS2Pointer<u8> SubGmsAdrs; // 0x24
+    PS2Pointer<u8> MimeAdrs; // 0x28
+    PS2Pointer<u8> SvxAdrs; // 0x2C
+    PS2Pointer<u8> SvxWorkAdrs; // 0x30
+    PS2Pointer<SFXENV> EnvAdrs; // 0x34
+    u16 GmsNum; // 0x38
     f32 scale; // 0x3C
     PS2Pointer<PPARTS> pParts;  // 0x40
     PS2Pointer<struct PSFXOBJ> pObjSub; // 0x44
@@ -860,8 +892,7 @@ typedef struct PSFXOBJ {
     u32 Condition; // 0x54
     s16 Pause; // 0x58
     s16 GmsTransType; // 0x5A
-    s32 partsMax;
-    s32 ipad;
+    kitOutlineObjEnv LineEnv; // 0x5C
     PS2Pointer<PMIME> pMime; // 0x64
     s16 OutLineFlag; // 0x68
     f32 ClipOffset; // 0x6C
@@ -877,21 +908,43 @@ typedef struct PSFXOBJ {
     f32 ShadowSize; // 0x88
     f32 ShadowOffset; // 0x8C
     f32 ShadowRange; // 0x90
-    s16 ObjNum;
-    s16 DrawWorkCnt;
-    s32 OutFlag;
-    s32 actNum;
+    s16 ObjNum; // 0x94
+    s16 DrawWorkCnt; // 0x96
+    s32 OutFlag; // 0x98
+    s32 actNum; // 0x9C
 
     void Draw(KlonoaMemory* mem) {
         ScaleVector.draw(mem, "ScaleVector", -5.0, 5.0);
         drawFloat(mem, "ShadowSize", &ShadowSize, 0.0, 500.0);
         drawFloat(mem, "ShadowOffset", &ShadowOffset, 0.0, 500.0);
         drawFloat(mem, "ShadowRange", &ShadowRange, 0.0, 500.0);
+        ImGui::Text("PartsNum: %d", PartsNum);
         ImGui::Text("scale: %f", scale);
-        ImGui::Text("upad2: %f", upad2);
-        ImGui::Text("pSfx: 0x%08x", pSfx.ptr);
-        ImGui::Text("pAct: 0x%08x", pAct.ptr);
-        
+        ImGui::Text("ObjNum: %d", ObjNum);
+
+        if (ImGui::TreeNode("parts")) {
+            for (int i = 0; i < PartsNum; i++) {
+                std::string name = "parts[" + std::to_string(i) + "]";
+                if (ImGui::TreeNode(name.c_str())) {
+                    PPARTS* part = pParts.Get(mem, sizeof(PPARTS) * i);
+                    part->draw(mem);
+                    ImGui::TreePop();
+                }
+            }
+            ImGui::TreePop();
+        }
+
+        if (pObjSub.IsValid() && ImGui::TreeNode("pObjSub")) {
+            struct PSFXOBJ* sub = pObjSub.Get(mem);
+            sub->Draw(mem);
+            ImGui::TreePop();
+        }
+
+        if (pObjTop.IsValid() && ImGui::TreeNode("pObjTop")) {
+            struct PSFXOBJ* top = pObjTop.Get(mem);
+            top->Draw(mem);
+            ImGui::TreePop();
+        }
     }
 } PSFXOBJ;
 
@@ -1620,7 +1673,53 @@ typedef struct {
         tposi.draw(mem, "tposi", -1000, 1000);
         ImGui::Text("dcnt: %f", dcnt);
     }
-
 } VWork;
+
+typedef struct {
+    PS2Pointer<FVECTOR> norm;
+    PS2Pointer<FVECTOR> center;
+    PS2Pointer<FVECTOR> vert;
+    float rx;
+    float ry;
+    float cx;
+    float cy;
+    float clen;
+    uint count;
+
+    void draw(KlonoaMemory* mem) {
+        drawFloat2(mem, "rot", &rx, -M_PI, M_PI);
+        drawFloat2(mem, "cam", &cx, -M_PI, M_PI);
+        drawFloat(mem, "clen", &clen, 0.0f, 10.0f);
+        ImGui::Text("count: %d", count);
+    }
+} HFMIR;
+
+typedef struct {
+    u32 type;
+    u16 group_num;
+    s16 minx;
+    s16 miny;
+    s16 minz;
+    s16 maxx;
+    s16 maxy;
+    s16 maxz;
+} CHeader;
+
+typedef struct {
+    u8 cache;
+    u8 id;
+    s16 x;
+    s16 y;
+    s16 z;
+    s16 nx;
+    s16 ny;
+    s16 nz;
+    s16 s;
+    s16 t;
+    u8 r;
+    u8 g;
+    u8 b;
+    u8 a;
+} CPacked;
 
 #endif

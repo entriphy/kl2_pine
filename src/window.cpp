@@ -1,10 +1,11 @@
 #include <iostream>
 #include <GLFW/glfw3.h>
 #include <imgui.h>
+#include <imgui_impl_glfw.h>
+#include <imgui_impl_opengl3.h>
 
-#include "imgui_impl_glfw.h"
-#include "imgui_impl_opengl3.h"
 #include "window.h"
+// #include "objwork.h"
 
 #define GLSL_VERSION "#version 330"
 
@@ -15,7 +16,7 @@ Window::Window() {
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GLFW_TRUE);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-    window = glfwCreateWindow(720, 720, "Klonoa 2 Thing", nullptr, nullptr);
+    window = glfwCreateWindow(720, 720, "Klonoa 2 PINE", nullptr, nullptr);
     if (window == nullptr) {
         glfwTerminate();
         throw "Could not create GLFW window";

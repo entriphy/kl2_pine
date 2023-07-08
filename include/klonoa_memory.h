@@ -20,6 +20,8 @@ public:
     static const uint RPCARG_ADDRESS = 0x0040efa0;
     static const uint RPCRECVBUF_ADDRESS = 0x00417200;
     static const uint SNDMAINBUFFER_ADDRESS = 0x00417300;
+    static const uint HFMIRCNT_ADDRESS = 0x003FA4E4;
+    static const uint HFMIRBUF_ADDRESS = 0x00334BC0;
 
     static bool IsValidPointer(uint ptr) {
         return ptr != 0 && ptr < 0x2000000;

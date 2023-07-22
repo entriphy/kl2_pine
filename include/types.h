@@ -569,6 +569,52 @@ std::map<s16, std::string> abeObjMap = {
     { 247, "abOBJ_FXNUM" } // 0x000000F7
 };
 
+std::string hato_stat1[] = {
+    "htBOSS_NULL",
+    "htBOSS_02",
+    "htBOSS_02_BUNSIN",
+    "htBOSS_03",
+    "htBOSS_06",
+    "htBOSS_06_MIST_BALL",
+    "htB2_EFF",
+    "htBOSS_GIMM",
+    "htBOSS_01",
+    "htBOSS_01_ATK_TOP",
+    "htBOSS_04",
+    "htBOOST_RING",
+    "htATTACK_NUT",
+    "htBOARD_MYU",
+    "htBMYU_PA",
+    "htATTACK_ICE",
+    "htBOSS_07",
+    "htB7_BIT",
+    "htZAKO_BALLOON",
+    "htBOSS_08",
+    "htITEM",
+    "htZAKO_TAT",
+    "htZAKO_TAT2",
+    "htZAKO_TAT2_PA",
+    "htSOUND",
+    "htZAKO_OBAKE",
+    "htTAKA_EFFECT",
+    "htB71_BG",
+    "htNEMO_MYU",
+    "htB7_BIT2",
+    "htB8_ATK_PA",
+    "htB71_BG_OBJ",
+    "htPT_BOSS",
+    "htTAT_BOMB",
+    "htBOOST_RING_1702",
+    "htBOSS_00",
+    "htBOSS_00_HAND",
+    "htZAKO_TAT2_BOMB",
+    "htMETA_ENMY",
+    "htEV_JORA",
+    "htEV_JORA2",
+    "htAREA2702",
+    "htKING_ATTACK"
+};
+
 std::string kazuya_stat1[] = {
     "NULL",
     "kzOST",
@@ -594,6 +640,8 @@ inline const char* getStat1(s16 stat0, s16 stat1) {
             return harada_stat1[stat1].c_str();
         case 6:
             return abeObjMap[stat1].c_str();
+        case 7:
+            return hato_stat1[stat1].c_str();
         case 8:
             return kazuya_stat1[stat1].c_str();
         case 9:
@@ -695,6 +743,7 @@ typedef struct _OBJWORK {
             if (ImGui::TreeNode("ZAKO_WORK")) {
                 DrawZakoWork(mem, work.Get<ZAKO_WORK>(mem));
                 ImGui::TreePop();
+            }
             }
             ImGui::TreePop();
         }

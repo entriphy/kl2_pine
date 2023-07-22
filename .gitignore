@@ -38,3 +38,4 @@ build/
 
 # Editors
 .vscode/
+.idea/

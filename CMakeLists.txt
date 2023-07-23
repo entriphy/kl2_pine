@@ -3,7 +3,7 @@ project(kl2_pine)
 set(CMAKE_CXX_STANDARD 20)
 
 # Global flags
-add_compile_options(-O0 -m32 -DPS2_TYPE_STUBS)
+add_compile_options(-m32 -DPS2_TYPE_STUBS)
 add_link_options(-m32)
 
 # SDL
@@ -39,7 +39,14 @@ add_executable(${PROJECT_NAME}
     src/draw/nakano_draw.cpp
     src/draw/take_draw.cpp
 )
-target_link_libraries(${PROJECT_NAME} IMGUI)
+target_link_libraries(${PROJECT_NAME} IMGUI SDL3::SDL3)
+if (WIN32)
+    target_link_libraries(${PROJECT_NAME} wsock32 ws2_32)
+    add_custom_command(
+        TARGET ${PROJECT_NAME} POST_BUILD
+        COMMAND "${CMAKE_COMMAND}" -E copy_if_different "$<TARGET_FILE:SDL3::SDL3>" "$<TARGET_FILE_DIR:${PROJECT_NAME}>"
+    )
+endif()
 target_include_directories(${PROJECT_NAME} PRIVATE
     include
     ${KL2_DIR}/include

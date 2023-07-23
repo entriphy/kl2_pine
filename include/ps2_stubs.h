@@ -4,10 +4,17 @@
 #include "types.h"
 
 // libvu0.h
-typedef s32	qword[4] __attribute__ ((aligned(16)));
+#ifdef _MSC_VER
+typedef __declspec(align(16)) s32 qword[4];
+typedef __declspec(align(16)) s32 sceVu0IVECTOR[4];
+typedef __declspec(align(16)) f32 sceVu0FVECTOR[4];
+typedef __declspec(align(16)) f32 sceVu0FMATRIX[4][4];
+#else
+typedef s32	qword[4] __attribute__((aligned(16)));
 typedef s32 sceVu0IVECTOR[4] __attribute__((aligned(16)));
 typedef f32	sceVu0FVECTOR[4] __attribute__((aligned(16)));
 typedef f32	sceVu0FMATRIX[4][4] __attribute__((aligned(16)));
+#endif
 
 // eestruct.h
 typedef struct {

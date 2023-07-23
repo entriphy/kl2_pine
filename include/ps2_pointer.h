@@ -6,14 +6,14 @@
 template <typename T>
 class PS2Pointer {
 public:
-    uint ptr;
+    u32 ptr;
 
-    T* Get(KlonoaMemory* mem, uint offset = 0) {
+    T* Get(KlonoaMemory* mem, u32 offset = 0) {
         return mem->ReadObj<T>(ptr + offset);
     }
 
     template <typename U>
-    U* Get(KlonoaMemory* mem, uint offset = 0) {
+    U* Get(KlonoaMemory* mem, u32 offset = 0) {
         return mem->ReadObj<U>(ptr + offset);
     }
 

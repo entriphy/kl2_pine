@@ -1,3 +1,6 @@
+#ifndef WINDOW_H
+#define WINDOW_H
+
 #include <iostream>
 #include <imgui.h>
 #include <SDL.h>
@@ -19,3 +22,5 @@ public:
     void loop();
     [[nodiscard]] float getScale() const;
 };
+
+#endif

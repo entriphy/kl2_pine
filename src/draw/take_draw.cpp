@@ -1,13 +1,13 @@
 #include "common.h"
 #include "drawable.h"
 
-template<> void Drawable<COORD>::DrawImpl(COORD *obj, const char *label, float min, float max) {
+template<> void Drawable<tagCOORD>::DrawImpl(tagCOORD *obj, const char *label, float min, float max) {
     Drawable<sceVu0FVECTOR>::Draw(&obj->Rot, "Rot", -3.14f, 3.14f);
     Drawable<sceVu0FVECTOR>::Draw(&obj->Trans, "Trans", -2000.0f, 2000.0f);
 
     Drawable<sceVu0FMATRIX>::DrawTree(&obj->Mtx, "Mtx", -10.0f, 10.0f);
     Drawable<sceVu0FMATRIX>::DrawTree(&obj->MtxSav, "MtxSav", -10.0f, 10.0f);
-    Drawable<COORD>::DrawTree((u32)obj->Super, "Super");
+    Drawable<tagCOORD>::DrawTree((u32)obj->Super, "Super");
 
     ImGui::Text("WipCnt: %f", obj->WipCnt);
     ImGui::Text("Flag: %d", obj->Flag);
@@ -72,8 +72,8 @@ template<> void Drawable<MBLOCK>::DrawImpl(MBLOCK *obj, const char *label, float
 }
 
 template<> void Drawable<MOTION>::DrawImpl(MOTION *obj, const char *label, float min, float max) {
-    Drawable<COORD>::DrawTree((u32)obj->pBaseCoord, "pBaseCoord");
-    Drawable<COORD>::DrawTree((u32)obj->pCoord, "pCoord");
+    Drawable<tagCOORD>::DrawTree((u32)obj->pBaseCoord, "pBaseCoord");
+    Drawable<tagCOORD>::DrawTree((u32)obj->pCoord, "pCoord");
     Drawable<ACTTBL>::DrawTree((u32)obj->pActtbl, "pActtbl");
     if (ImGui::TreeNode("Mb")) {
         for (int i = 0; i < 4; i++) {
@@ -117,7 +117,7 @@ template<> void Drawable<SFXOBJ>::DrawImpl(SFXOBJ* obj, const char* label, float
     Drawable<sceVu0FMATRIX>::DrawTree((u32)obj->pNormalLight, "pNormalLight");
     if (ImGui::TreeNode("pParts")) {
         for (int i = 0; i < obj->PartsNum; i++) {
-            std::string name = "pParts[" + std::to_string(i) + "]";
+            std::string name = std::format("pParts[{}]", i);
             Drawable<PARTS>::DrawTree((u32)obj->pParts + sizeof(PARTS) * i, name.c_str());
         }
 

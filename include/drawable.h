@@ -60,9 +60,9 @@ inline void drawShort(const char* name, short* ptr, short min, short max) {
     }
 }
 
-inline void drawUShort(const char* name, ushort* ptr, ushort min, ushort max) {
+inline void drawu16(const char* name, u16* ptr, u16 min, u16 max) {
     if (ImGui::SliderScalar(name, ImGuiDataType_U16, ptr, &min, &max)) {
-        KlonoaMemory::Instance->Write<ushort>((char*)ptr - KlonoaMemory::Instance->ps2_ram, *ptr);
+        KlonoaMemory::Instance->Write<u16>((char*)ptr - KlonoaMemory::Instance->ps2_ram, *ptr);
     }
 }
 
@@ -92,7 +92,7 @@ inline void drawFloat(const char* name, float* ptr, float min, float max) {
 
 inline void drawFloat2(const char* name, float* ptr, float min, float max) {
     if (ImGui::SliderFloat2(name, ptr, min, max)) {
-        KlonoaMemory::Instance->Write<ulong>((char*)ptr - KlonoaMemory::Instance->ps2_ram, *(ulong *)ptr);
+        KlonoaMemory::Instance->Write<u64>((char*)ptr - KlonoaMemory::Instance->ps2_ram, *(u64 *)ptr);
     }
 }
 

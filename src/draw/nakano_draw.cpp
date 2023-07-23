@@ -10,14 +10,14 @@
 #define OBJWORKBUFF_ADDRESS 0x00366BB0
 
 
-template<> void Drawable<ROUTE>::DrawImpl(ROUTE *obj, const char *label, float min, float max) {
+template<> inline void Drawable<ROUTE>::DrawImpl(ROUTE *obj, const char *label, float min, float max) {
     ImGui::Text("vec:  %d %d %d", obj->vec.x, obj->vec.y, obj->vec.z);
     ImGui::Text("posi: %d %d %d", obj->posi.x, obj->posi.y, obj->posi.z);
     ImGui::Text("co:   %d", obj->co);
 //    ImGui::Text("posif: %d %d %d", (obj.vx + vec.vx * num) / 4096.0f, (posi.vy + vec.vy * num) / 4096.0f, (posi.vz + vec.vz * num) / 4096.0f);
 }
 
-template<> void Drawable<RT_WRK>::DrawImpl(RT_WRK *obj, const char *label, float min, float max) {
+template<> inline void Drawable<RT_WRK>::DrawImpl(RT_WRK *obj, const char *label, float min, float max) {
     ImGui::Text("cnt: %d", obj->cnt);
     ImGui::Text("plc: %d", obj->plc);
     ImGui::Text("rtn: %d", obj->rtn);
@@ -25,7 +25,7 @@ template<> void Drawable<RT_WRK>::DrawImpl(RT_WRK *obj, const char *label, float
     Drawable<ROUTE>::DrawTree((u32)obj->rtp, "rtn");
 }
 
-template<> void Drawable<OBJWORK>::DrawImpl(OBJWORK* obj, const char* label, float min, float max) {
+template<> inline void Drawable<OBJWORK>::DrawImpl(OBJWORK* obj, const char* label, float min, float max) {
     ImGui::Text("stat: %d", obj->stat);
     ImGui::Text("stat0: %d (%s)", obj->stat0, STAT0[obj->stat0].c_str());
     ImGui::Text("stat1: %d (%s)", obj->stat1, getStat1(obj->stat0, obj->stat1));

@@ -1,4 +1,3 @@
-#include <iostream>
 #include <imgui.h>
 #include <stdexcept>
 #include <backends/imgui_impl_sdl3.h>
@@ -13,7 +12,7 @@ Window::Window() {
     if (SDL_Init(0) != 0) {
         throw std::runtime_error("Failed to initialize SDL");
     }
-    window = SDL_CreateWindow("Klonoa 2 PINE", 720, 720, 0);
+    window = SDL_CreateWindow("Klonoa 2 PINE", 720, 720, SDL_WINDOW_HIGH_PIXEL_DENSITY);
     if (window == nullptr) {
         throw std::runtime_error("Could not create window");
     }

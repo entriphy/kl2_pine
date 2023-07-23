@@ -1,10 +1,8 @@
+#include <format>
 #include "window.h"
 #include "klonoa_memory.h"
 #include "common.h"
 #include "draw.h"
-#include <unordered_map>
-#include <typeinfo>
-#include <typeindex>
 
 KlonoaMemory* KlonoaMemory::Instance = nullptr;
 Window window;
@@ -70,15 +68,30 @@ void draw() {
     }
 }
 
-std::unordered_map<std::type_index, int> map = {
-    {typeid(OBJWORK), 2 }
-};
-
 int main(int argc, char* argv[]) {
     KlonoaMemory::Instance = new KlonoaMemory();
-    std::cout << map[typeid(OBJWORK)] << std::endl;
+
+    if (KlonoaMemory::Instance->ipc == nullptr) {
+        SDL_ShowSimpleMessageBox(
+            SDL_MESSAGEBOX_ERROR,
+            "Error",
+            "Failed to connect to PCSX2. Ensure PINE is enabled and PCSX2 is running Klonoa 2.",
+            nullptr);
+        return 1;
+    }
+
+    char* gameId = KlonoaMemory::Instance->ipc->GetGameID();
+    if (strcmp(gameId, "SLUS-20151") != 0) {
+        std::string message = std::format("PCSX2 is not running Klonoa 2 NTSC (SLUS-20151), got {}.", gameId);
+        SDL_ShowSimpleMessageBox(
+            SDL_MESSAGEBOX_ERROR,
+            "Error",
+            message.c_str(),
+            nullptr);
+        return 2;
+    }
+
     window.draw = draw;
     window.loop();
-
     return 0;
 }

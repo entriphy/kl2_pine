@@ -24,16 +24,16 @@ public:
     static const u32 HFMIRBUF_ADDRESS = 0x00334BC0;
 
     static KlonoaMemory* Instance;
-
-    static bool IsValidPointer(u32 ptr) {
-        return ptr != 0 && ptr < 0x2000000;
-    }
-
     PINE::PCSX2* ipc;
     char* ps2_ram;
 
     KlonoaMemory()  {
-        ipc = new PINE::PCSX2();
+        try {
+            ipc = new PINE::PCSX2();
+            this->Read<u32>(0);
+        } catch (...) {
+            ipc = nullptr;
+        }
         ps2_ram = (char*)malloc(32 * 1024 * 1024); // 32 MB
     }
 
@@ -76,6 +76,10 @@ public:
         for (int i = 0; i < sizeof(T); i++) {
             ipc->Write<char>(address + i, *(ps2_ram + address + i));
         }
+    }
+
+    static bool IsValidPointer(u32 ptr) {
+        return ptr != 0 && ptr < 0x2000000;
     }
 
     // Class to traverse the game's archive files

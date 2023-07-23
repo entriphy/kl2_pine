@@ -2,6 +2,7 @@
 #define KLONOA_MEM_H
 
 #include "pine.h"
+#include "common.h"
 
 class KlonoaMemory {
 public:
@@ -9,7 +10,6 @@ public:
     static const uint GAMEGBL_VISION = 0x00366454;
     static const uint GAMEGBL_ADDRESS = 0x00366450;
     static const uint GAMEGBL_KLONOA_ADDRESS = 0x003667DC;
-    static const uint OBJWORK_BUFF_ADDRESS = 0x00366BB0;
     static const uint LEVEL_PACK_PTR_ADDRESS = 0x003FC2E8;
     static const uint VT_WAVE_ADDRESS = 0x003FB940;
     static const uint HRBGBIN_ADDRESS = 0x00332A90;
@@ -22,6 +22,8 @@ public:
     static const uint SNDMAINBUFFER_ADDRESS = 0x00417300;
     static const uint HFMIRCNT_ADDRESS = 0x003FA4E4;
     static const uint HFMIRBUF_ADDRESS = 0x00334BC0;
+
+    static KlonoaMemory* Instance;
 
     static bool IsValidPointer(uint ptr) {
         return ptr != 0 && ptr < 0x2000000;
@@ -46,8 +48,15 @@ public:
     }
 
     char* Read(uint address, uint size) {
-        for (int i = 0; i < size; i++) {
-            ps2_ram[address + i] = ipc->Read<char>(address + i);
+        uint i = 0;
+        while (i != size) {
+            if (size - i >= 8) {
+                *(u64 *)&ps2_ram[address + i] = ipc->Read<u64>(address + i);
+                i += 8;
+            } else {
+                ps2_ram[address + i] = ipc->Read<char>(address + i);
+                i++;
+            }
         }
         return ps2_ram + address;
     }

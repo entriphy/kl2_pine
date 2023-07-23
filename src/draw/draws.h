@@ -1,5 +1,9 @@
-#include "drawable.h"
-#include <format>
+#ifndef DRAWS_H
+#define DRAWS_H
+
+#include "hato_draw.h"
+#include "nakano_draw.h"
+#include "take_draw.h"
 
 template<> inline void Drawable<sceVu0FVECTOR>::DrawImpl(sceVu0FVECTOR* obj, const char* label, float min, float max) {
     if (ImGui::SliderFloat4(label, (float *)obj, min, max)) {
@@ -21,3 +25,5 @@ template<> inline void Drawable<sceVu0FMATRIX>::DrawImpl(sceVu0FMATRIX* obj, con
         KlonoaMemory::Instance->WriteObj<sceVu0FVECTOR>((char*)(*obj)[3] - KlonoaMemory::Instance->ps2_ram);
     }
 }
+
+#endif

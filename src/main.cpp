@@ -2,10 +2,10 @@
 #include "window.h"
 #include "klonoa_memory.h"
 #include "common.h"
-#include "draw.h"
+#include "draw/nakano_draw.h"
 
 KlonoaMemory* KlonoaMemory::Instance = nullptr;
-Window window;
+Window* window = nullptr;
 
 static const char* EmuStatuses[] = {
     "Running",
@@ -43,7 +43,7 @@ void draw() {
             // Window FPS counter
             ImGui::Text("FPS:");
             ImGui::PushStyleColor(ImGuiCol_Text, FpsColor);
-            ImGui::Text("%.0f", window.io->Framerate);
+            ImGui::Text("%.0f", window->io->Framerate);
             ImGui::PopStyleColor();
 
             // IRQC (in-game frame) count
@@ -91,7 +91,9 @@ int main(int argc, char* argv[]) {
         return 2;
     }
 
-    window.draw = draw;
-    window.loop();
+
+    window = new Window();
+    window->draw = draw;
+    window->loop();
     return 0;
 }

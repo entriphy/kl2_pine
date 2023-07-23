@@ -113,7 +113,7 @@ inline std::map<s16, std::string> OK_STAT1 = {
     { 13312, "T_D_CSR00" }
 };
 
-std::string HR_STAT1[] = {
+inline std::string HR_STAT1[] = {
     "mapexpl",
     "switch_trg",
     "game_puppet",

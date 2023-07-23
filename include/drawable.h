@@ -1,9 +1,10 @@
 #ifndef DRAWABLE_H
 #define DRAWABLE_H
 
-#include "klonoa_memory.h"
 #include <imgui.h>
 #include <format>
+
+#include "klonoa_memory.h"
 
 const ImVec4 COLOR_RED = ImVec4(1.0f, 0.0f, 0.0f, 1.0f);
 

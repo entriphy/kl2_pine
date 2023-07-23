@@ -1,18 +1,21 @@
 #include <iostream>
-#include <GLFW/glfw3.h>
 #include <imgui.h>
+#include <SDL.h>
 
 #define GLSL_VERSION "#version 330"
 
 class Window {
 public:
-    GLFWwindow* window;
+    SDL_Window* window;
+    SDL_Renderer* renderer;
     ImGuiIO* io;
     void (*draw)();
     float fps;
+    bool should_close;
 
     Window();
     ~Window();
 
     void loop();
+    [[nodiscard]] float getScale() const;
 };

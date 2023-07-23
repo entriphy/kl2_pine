@@ -6,27 +6,24 @@ set(CMAKE_CXX_STANDARD 20)
 add_compile_options(-O0 -m32 -DPS2_TYPE_STUBS)
 add_link_options(-m32)
 
-# GLFW
-set(GLFW_DIR ${CMAKE_CURRENT_SOURCE_DIR}/lib/glfw)
-set(GLFW_BUILD_DOCS OFF CACHE BOOL "" FORCE)
-set(GLFW_BUILD_TESTS OFF CACHE BOOL "" FORCE)
-set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
-add_subdirectory(${GLFW_DIR})
+# SDL
+set(SDL_DIR ${CMAKE_CURRENT_SOURCE_DIR}/lib/SDL)
+add_subdirectory(${SDL_DIR})
 
 # ImGui
 set(IMGUI_DIR ${CMAKE_CURRENT_SOURCE_DIR}/lib/imgui)
 add_library(IMGUI STATIC)
 target_sources(IMGUI 
     PRIVATE ${IMGUI_DIR}/imgui_demo.cpp ${IMGUI_DIR}/imgui_draw.cpp ${IMGUI_DIR}/imgui_tables.cpp ${IMGUI_DIR}/imgui_widgets.cpp ${IMGUI_DIR}/imgui.cpp
-    PRIVATE ${IMGUI_DIR}/backends/imgui_impl_opengl3.cpp ${IMGUI_DIR}/backends/imgui_impl_glfw.cpp
+    PRIVATE ${IMGUI_DIR}/backends/imgui_impl_sdl3.cpp ${IMGUI_DIR}/backends/imgui_impl_sdlrenderer3.cpp
 )
 target_include_directories(IMGUI
     PUBLIC ${IMGUI_DIR}
     PUBLIC ${IMGUI_DIR}/backends
-    PUBLIC ${SDL3_DIR}/include
+    PUBLIC ${SDL_DIR}/include
 )
 target_link_libraries(IMGUI
-    PUBLIC glfw ${CMAKE_DL_LIBS}
+    PUBLIC SDL3::SDL3 ${CMAKE_DL_LIBS}
 )
 
 # Klonoa 2 Decomp

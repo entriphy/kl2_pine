@@ -1,9 +1,9 @@
 [submodule "lib/imgui"]
 	path = lib/imgui
 	url = https://github.com/ocornut/imgui
-[submodule "lib/glfw"]
-	path = lib/glfw
-	url = https://github.com/glfw/glfw
 [submodule "lib/kl2"]
 	path = lib/kl2
 	url = https://github.com/entriphy/kl2_lv_decomp.git
+[submodule "lib/SDL"]
+	path = lib/SDL
+	url = https://github.com/libsdl-org/SDL

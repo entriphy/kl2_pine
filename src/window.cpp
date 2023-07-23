@@ -1,40 +1,32 @@
 #include <iostream>
-#include <GLFW/glfw3.h>
 #include <imgui.h>
-#include <backends/imgui_impl_glfw.h>
-#include <backends/imgui_impl_opengl3.h>
+#include <stdexcept>
+#include <backends/imgui_impl_sdl3.h>
+#include <backends/imgui_impl_sdlrenderer3.h>
 
 #include "window.h"
-// #include "objwork.h"
 
 #define GLSL_VERSION "#version 330"
 
 Window::Window() {
-    // Initialize GLFW
-    glfwInit();
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GLFW_TRUE);
-    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-    window = glfwCreateWindow(720, 720, "Klonoa 2 PINE", nullptr, nullptr);
+    // Initialize SDL
+    if (SDL_Init(0) != 0) {
+        throw std::runtime_error("Failed to initialize SDL");
+    }
+    window = SDL_CreateWindow("Klonoa 2 PINE", 720, 720, 0);
     if (window == nullptr) {
-        glfwTerminate();
-        throw "Could not create GLFW window";
+        throw std::runtime_error("Could not create window");
     }
-    glfwMakeContextCurrent(window);
+    SDL_SetWindowPosition(window, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
 
-    GLFWmonitor *monitor = glfwGetPrimaryMonitor();
-    if (monitor != nullptr) {
-        const GLFWvidmode *mode = glfwGetVideoMode(monitor);
-        if (mode != nullptr) {
-            int monitorX, monitorY;
-            glfwGetMonitorPos(monitor, &monitorX, &monitorY);
-
-            int windowWidth, windowHeight;
-            glfwGetWindowSize(window, &windowWidth, &windowHeight);
-            glfwSetWindowPos(window, monitorX + (mode->width - windowWidth) / 2, monitorY + (mode->height - windowHeight) / 2);
-        }
+    renderer = SDL_CreateRenderer(window, nullptr, SDL_RENDERER_PRESENTVSYNC | SDL_RENDERER_ACCELERATED);
+    if (renderer == nullptr) {
+        throw std::runtime_error("Could not create renderer");
     }
+
+    const float scale{getScale()};
+    SDL_SetRenderScale(renderer, scale, scale);
+    should_close = false;
 
     // Initialize ImGui
     ImGui::CreateContext();
@@ -45,19 +37,22 @@ Window::Window() {
     io->ConfigWindowsMoveFromTitleBarOnly = true;
 
     ImGuiViewport *viewport = ImGui::GetMainViewport();
-    ImGui_ImplGlfw_InitForOpenGL(window, true);
-    ImGui_ImplOpenGL3_Init(GLSL_VERSION);
+    ImGui_ImplSDL3_InitForSDLRenderer(window, renderer);
+    ImGui_ImplSDLRenderer3_Init(renderer);
 }
 
 void Window::loop() {
-    while (!glfwWindowShouldClose(window)) {
-        glfwPollEvents();
-        
-        int app_width, app_height;
-        glfwGetFramebufferSize(window, &app_width, &app_height);
+    while (!should_close) {
+        SDL_Event event{};
+        while (SDL_PollEvent(&event) == 1) {
+            ImGui_ImplSDL3_ProcessEvent(&event);
+            if (event.type == SDL_EVENT_QUIT) {
+                should_close = true;
+            }
+        }
 
-        ImGui_ImplOpenGL3_NewFrame();
-        ImGui_ImplGlfw_NewFrame();
+        ImGui_ImplSDLRenderer3_NewFrame();
+        ImGui_ImplSDL3_NewFrame();
         ImGui::NewFrame();
 
         ImGui::SetNextWindowPos(ImVec2(0, 0));
@@ -68,16 +63,33 @@ void Window::loop() {
         ImGui::End();
         ImGui::Render();
 
-        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-        glfwSwapBuffers(window);
+        SDL_SetRenderDrawColor(renderer, 100, 100, 100, 255);
+        SDL_RenderClear(renderer);
+        ImGui_ImplSDLRenderer3_RenderDrawData(ImGui::GetDrawData());
+        SDL_RenderPresent(renderer);
     }
 }
 
 Window::~Window() {
-    ImGui_ImplOpenGL3_Shutdown();
-    ImGui_ImplGlfw_Shutdown();
+    ImGui_ImplSDLRenderer3_Shutdown();
+    ImGui_ImplSDL3_Shutdown();
     ImGui::DestroyContext();
 
-    glfwDestroyWindow(window);
-    glfwTerminate();
+    SDL_DestroyRenderer(renderer);
+    SDL_DestroyWindow(window);
+    SDL_Quit();
+}
+
+float Window::getScale() const {
+    int window_width{0};
+    int window_height{0};
+    SDL_GetWindowSize(window, &window_width, &window_height);
+
+    int render_output_width{0};
+    int render_output_height{0};
+    SDL_GetCurrentRenderOutputSize(renderer, &render_output_width, &render_output_height);
+
+    const float scale_x{static_cast<float>(render_output_width) / static_cast<float>(window_width)};
+
+    return scale_x;
 }

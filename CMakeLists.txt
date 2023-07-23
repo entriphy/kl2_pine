@@ -34,7 +34,6 @@ set(KL2_DIR ${CMAKE_CURRENT_SOURCE_DIR}/lib/kl2)
 set(KL2_INCLUDE_DIR ${KL2_DIR}/include)
 
 # Klonoa 2 PINE
-find_package(IMGUI REQUIRED)
 add_executable(${PROJECT_NAME}
     src/main.cpp
     src/window.cpp
